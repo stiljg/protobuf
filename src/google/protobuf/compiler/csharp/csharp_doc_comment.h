@@ -28,35 +28,24 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-// Definitions of protos for testing cross-version compatibility.  The
-// UpRevision message acts as if it were a newer version of the DownRevision
-// message.  That is, UpRevision shares all the same fields as DownRevision,
-// but UpRevision can add fields and add enum values.
-syntax = "proto2";
 
-package google.protobuf.util;
+#ifndef GOOGLE_PROTOBUF_COMPILER_CSHARP_DOC_COMMENT_H__
+#define GOOGLE_PROTOBUF_COMPILER_CSHARP_DOC_COMMENT_H__
 
-option csharp_namespace = "Google.ProtocolBuffers.TestProtos";
+#include <google/protobuf/io/printer.h>
+#include <google/protobuf/descriptor.h>
 
-message DownRevision {
-  enum Enum {
-    DEFAULT_VALUE = 2;
-    NONDEFAULT_VALUE = 3;
-  }
-
-  optional Enum value = 1 [default = DEFAULT_VALUE];
-  repeated Enum values = 2;
-}
-
-message UpRevision {
-  enum Enum {
-    DEFAULT_VALUE = 2;
-    NONDEFAULT_VALUE = 3;
-    NEW_VALUE = 4;
-    NEW_VALUE_2 = 5;
-    NEW_VALUE_3 = 6;
-  }
-
-  optional Enum value = 1 [default = DEFAULT_VALUE];
-  repeated Enum values = 2;
-}
+namespace google {
+namespace protobuf {
+namespace compiler {
+namespace csharp {
+    void WriteMessageDocComment(io::Printer* printer, const Descriptor* message);
+    void WritePropertyDocComment(io::Printer* printer, const FieldDescriptor* field);
+    void WriteEnumDocComment(io::Printer* printer, const EnumDescriptor* enumDescriptor);
+    void WriteEnumValueDocComment(io::Printer* printer, const EnumValueDescriptor* value);
+    void WriteMethodDocComment(io::Printer* printer, const MethodDescriptor* method);
+}  // namespace csharp
+}  // namespace compiler
+}  // namespace protobuf
+}  // namespace google
+#endif  // GOOGLE_PROTOBUF_COMPILER_CSHARP_DOC_COMMENT_H__

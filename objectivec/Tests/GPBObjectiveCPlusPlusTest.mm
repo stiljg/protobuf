@@ -1,5 +1,5 @@
 // Protocol Buffers - Google's data interchange format
-// Copyright 2008 Google Inc.  All rights reserved.
+// Copyright 2013 Google Inc.  All rights reserved.
 // https://developers.google.com/protocol-buffers/
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,33 +28,42 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <google/protobuf/util/proto_cast.h>
 
-#include <google/protobuf/util/unknown_enum_test.pb.h>
-#include <gtest/gtest.h>
-#include <gmock/gmock.h>
+#import "GPBTestUtilities.h"
 
-namespace google {
-using google::protobuf::util::UpRevision;
-using google::protobuf::util::DownRevision;
 
-namespace {
+//
+// This is just a compile test (here to make sure things never regress).
+//
+// Objective C++ can run into issues with how the NS_ENUM/CF_ENUM declartion
+// works because of the C++ spec being used for that compilation unit. So
+// the fact that these imports all work without errors/warning means things
+// are still good.
+//
+// The "well know types" should have cross file enums needing imports.
+#import "GPBProtocolBuffers.h"
+// Some of the tests explicitly use cross file enums also.
+#import "google/protobuf/Unittest.pbobjc.h"
+#import "google/protobuf/UnittestImport.pbobjc.h"
 
-TEST(ProtoCastTest, V2KnownValue) {
-  UpRevision sender;
-  sender.set_value(UpRevision::NONDEFAULT_VALUE);
+// Sanity check the conditions of the test within the Xcode project.
+#if !__cplusplus
+  #error This isn't compiled as Objective C++?
+#elif __cplusplus >= 201103L
+  // If this trips, it means the Xcode default might have change (or someone
+  // edited the testing project) and it might be time to revisit the GPB_ENUM
+  // define in GPBBootstrap.h.
+  #warning Did the Xcode default for C++ spec change?
+#endif
 
-  DownRevision receiver = proto_cast<DownRevision>(sender);
-  ASSERT_EQ(DownRevision::NONDEFAULT_VALUE, receiver.value());
+
+// Dummy XCTest.
+@interface GPBObjectiveCPlusPlusTests : GPBTestCase
+@end
+
+@implementation GPBObjectiveCPlusPlusTests
+- (void)testCPlusPlus {
+  // Nothing, This was a compile test.
+  XCTAssertTrue(YES);
 }
-
-TEST(ProtoCastTest, V2UnknownValue) {
-  UpRevision sender;
-  sender.set_value(UpRevision::NEW_VALUE);
-
-  DownRevision receiver = proto_cast<DownRevision>(sender);
-  ASSERT_EQ(DownRevision::DEFAULT_VALUE, receiver.value());
-}
-
-}  // namespace
-}  // namespace google
+@end
